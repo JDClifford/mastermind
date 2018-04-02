@@ -4,7 +4,7 @@ class Mastermind
 		puts "How many digits would you like to play with?"
 		@string_length = gets.chomp.to_i
 		puts "How many guesses?"
-		@number_of_guesses = gets.chomp.to_i
+		$number_of_guesses = gets.chomp.to_i
 	end
 
 	def random_number_picker #Picks the winning array
@@ -32,7 +32,8 @@ class Mastermind
 
 	def attempt_check #Checks the accuracy of the guess
 		x = 0
-		hints = Hash.new
+		y = 0
+		hints = []
 		unless @attempt_array != @winning_array
 			puts "You win! The correct string is #{@winning_array}!"
 			exit
@@ -40,29 +41,32 @@ class Mastermind
 		while x < @string_length
 			if @winning_array.include?(@attempt_array[x])
 				if @winning_array[x] == @attempt_array[x]
-					hints[@attempt_array[x]] = "●"
+					hints[x] = "●"
 				else
-					hints[@attempt_array[x]] = "○"
+					hints[x] = "○"
 				end
 				x += 1
 			else
-				hints[@attempt_array[x]] = "x"
+				hints[x] = "x"
 				x += 1
 			end
 		end
-		hints.each do |value, hint|
-			print "#{value}: #{hint} "
+		hints.each do |i|
+			print "#{@attempt_array[y]}: #{i} "
 			puts ""
+			y += 1
 		end
 	end
 end
 
-def plays_game
+def plays_game #Loops through game for however many guesses the user has selected
 	instance = Mastermind.new
+	i = 0
 	instance.random_number_picker
-	loop do	
+	until i == $number_of_guesses
 		instance.user_attempt
 		instance.attempt_check
+		i += 1
 	end
 end
 
