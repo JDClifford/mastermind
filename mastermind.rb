@@ -1,46 +1,53 @@
 class Mastermind
 
 	def initialize
+		puts "To make the computer guess: Enter 1"
+		puts "To guess yourself: Enter 2"
+		$type_of_game = gets.chomp.to_i
 		puts "How many digits would you like to play with?"
 		@string_length = gets.chomp.to_i
 		puts "How many guesses?"
 		$number_of_guesses = gets.chomp.to_i
 	end
 
-	def random_number_picker #Picks the winning array
-		@winning_array = []
+	def computer_input #Computer AI chooses a random number
+		input = []
 		@string_length.times do
-			@winning_array.push(rand(6))
-			@winning_array.map! {|i| i = i.to_s}
+		input.push(rand(6))
 		end
+		@cpu_array = input
 	end
-
 	
-	def user_attempt #Allows the user to input their guess
-		attempt_array = []
-		attempt = ""
-		attempt_int = 0
-		while attempt.length != @string_length
+	def user_input #Human user chooses a random number
+		@user_array = []
+		user_storage = ""
+		user_int = 0
+		while user_storage.length != @string_length
 			puts "Please enter a #{@string_length} digit number:"
-			attempt = gets.chomp
-			@attempt_array = attempt.split("")
-			unless attempt.length == @string_length
+			user_storage = gets.chomp
+			@user_array = user_storage.split("")
+			unless user_storage.length == @string_length
 				puts "Error: That is not the correct number of digits."
 			end
 		end
+		@user_array.map! {|i| i = i.to_i}
 	end
 
-	def attempt_check #Checks the accuracy of the guess
+	def attempt_check #Checks to see if the Computer AI's number matches the user's number
 		x = 0
 		y = 0
 		hints = []
-		unless @attempt_array != @winning_array
-			puts "You win! The correct string is #{@winning_array}!"
+
+		puts "KEY: ● = correct number in correct spot"
+		puts "     ○ = correct number in incorrect spot"
+		puts "     x = number not correct"
+		unless @user_array != @cpu_array
+			puts "Game over! The correct number was found!: #{@user_array}"
 			exit
 		end
 		while x < @string_length
-			if @winning_array.include?(@attempt_array[x])
-				if @winning_array[x] == @attempt_array[x]
+			if @cpu_array.include?(@user_array[x])
+				if @cpu_array[x] == @user_array[x]
 					hints[x] = "●"
 				else
 					hints[x] = "○"
@@ -52,21 +59,38 @@ class Mastermind
 			end
 		end
 		hints.each do |i|
-			print "#{@attempt_array[y]}: #{i} "
+			if $type_of_game == 1
+			print "#{@cpu_array[y]}: #{i} "
 			puts ""
 			y += 1
+			else
+			print "#{@user_array[y]}: #{i} "
+			puts ""
+			y += 1
+			end
 		end
 	end
 end
 
 def plays_game #Loops through game for however many guesses the user has selected
 	instance = Mastermind.new
-	i = 0
-	instance.random_number_picker
-	until i == $number_of_guesses
-		instance.user_attempt
-		instance.attempt_check
-		i += 1
+	
+	if $type_of_game == 2
+		i = 0
+		instance.computer_input
+		until i == $number_of_guesses
+			instance.user_input
+			instance.attempt_check
+			i += 1
+		end
+	else 
+		i = 0
+		instance.user_input
+		until i == $number_of_guesses
+			instance.computer_input
+			instance.attempt_check
+			i += 1
+		end
 	end
 end
 
